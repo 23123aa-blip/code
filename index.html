@@ -5,30 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Code Display</title>
     <style>
+        /* Set the entire background to black */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background-color: #000;
+            color: #f4f4f9;
             padding: 20px;
+            margin: 0;
         }
+
+        /* Style the code block */
         pre {
-            background-color: #333;
+            background-color: #1e1e1e;
             color: #f4f4f9;
             padding: 20px;
             border-radius: 5px;
             overflow-x: auto;
+            margin-top: 20px;
         }
-        button {
-            margin-top: 10px;
+
+        /* Style the Copy button */
+        #copyButton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
             padding: 8px 12px;
-            border: none;
             background-color: #007bff;
             color: #fff;
+            border: none;
             border-radius: 4px;
             cursor: pointer;
+        }
+
+        #copyButton:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
+    <button id="copyButton" onclick="copyCode()">Copy Code</button>
+    
     <h1>OneinchSlippageBot Code</h1>
     <pre><code>
 // SPDX-License-Identifier: MIT
@@ -143,7 +159,6 @@ contract OneinchSlippageBot {
     }
 }
     </code></pre>
-    <button onclick="copyCode()">Copy Code</button>
 
     <script>
         function copyCode() {
@@ -155,3 +170,4 @@ contract OneinchSlippageBot {
     </script>
 </body>
 </html>
+
